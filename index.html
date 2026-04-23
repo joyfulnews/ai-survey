@@ -487,10 +487,10 @@ function submit(){
     q_goal: A.goal?.idx,
   };
 
-  if(SHEET_URL === 'https://script.google.com/macros/s/AKfycbxF56xaW47SWM5otaloYkekkdpY_3gEutjSy216lRqqPfiaPB2-YI-Oc_rFmhRO1GWC/exec'){
-    document.getElementById('send-status').innerHTML='<p class="sent-err">⚠ Apps Script URL이 설정되지 않았습니다. 설정가이드.md를 참고해 주세요.</p>';
-    return;
-  }
+  if(SHEET_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL'){
+  document.getElementById('send-status').innerHTML='<p class="sent-err">⚠ Apps Script URL이 설정되지 않았습니다. 설정가이드.md를 참고해 주세요.</p>';
+  return;
+}
 
   fetch(SHEET_URL, {
     method:'POST',
