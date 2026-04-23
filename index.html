@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 교육 반 배정 설문 | AI디지털배움터</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f5f5f5;color:#1a1a1a;line-height:1.6;font-size:16px;}
+  .container{max-width:640px;margin:0 auto;padding:1.5rem 1rem 4rem;}
+  .header{text-align:center;padding:2rem 0 1.5rem;}
+  .header .logo{font-size:12px;color:#888;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;}
+  .header h1{font-size:22px;font-weight:600;color:#111;margin-bottom:.5rem;}
+  .header p{font-size:13px;color:#666;}
+  .prog-wrap{height:4px;background:#e0e0e0;border-radius:99px;margin-bottom:.6rem;overflow:hidden;}
+  .prog-fill{height:100%;background:#2563EB;border-radius:99px;transition:width .4s ease;}
+  .prog-meta{display:flex;justify-content:space-between;font-size:11px;color:#999;margin-bottom:1.5rem;}
+  .step{display:none;}.step.active{display:block;}
+  .card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1rem;border:1px solid #e8e8e8;}
+  .card-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;margin-bottom:.85rem;}
+  .b-info{background:#EFF6FF;color:#1D4ED8;}
+  .b-common{background:#EFF6FF;color:#1D4ED8;}
+  .b-a{background:#F0FDF4;color:#166534;}
+  .b-b{background:#FFF7ED;color:#9A3412;}
+  .b-c{background:#F5F3FF;color:#5B21B6;}
+  .b-d{background:#F9FAFB;color:#6B7280;}
+  .card-title{font-size:15px;font-weight:600;color:#111;margin-bottom:3px;}
+  .card-sub{font-size:12px;color:#888;margin-bottom:1.1rem;line-height:1.6;}
+  .qb{margin-bottom:1.25rem;}.qb:last-child{margin-bottom:0;}
+  .q-head{display:flex;align-items:flex-start;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+  .qnum{font-size:12px;color:#aaa;flex-shrink:0;margin-top:2px;}
+  .ql{font-size:14px;color:#111;line-height:1.55;flex:1;}
+  .req{color:#EF4444;font-size:12px;}
+  .mod-tag{font-size:10px;padding:2px 7px;border-radius:99px;flex-shrink:0;margin-top:3px;font-weight:600;}
+  .mt-c{background:#DBEAFE;color:#1E40AF;}
+  .mt-b{background:#FEF3C7;color:#92400E;}
+  .mt-a{background:#EDE9FE;color:#4C1D95;}
+  .opts{display:flex;flex-direction:column;gap:6px;}
+  .opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid #e8e8e8;cursor:pointer;font-size:13px;color:#333;line-height:1.45;transition:all .15s;background:#fff;}
+  .opt:hover{border-color:#93C5FD;background:#F0F9FF;}
+  .opt.sel{background:#EFF6FF;border-color:#2563EB;color:#1D4ED8;}
+  .dot{width:16px;height:16px;border-radius:50%;border:1.5px solid #d1d5db;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:border-color .15s;}
+  .dot-in{width:8px;height:8px;border-radius:50%;background:#2563EB;display:none;}
+  .opt.sel .dot{border-color:#2563EB;}.opt.sel .dot-in{display:block;}
+  input[type="text"]{width:100%;padding:10px 12px;border:1px solid #e8e8e8;border-radius:8px;font-size:14px;color:#111;font-family:inherit;transition:border-color .15s;}
+  input[type="text"]:focus{outline:none;border-color:#2563EB;}
+  .nav{display:flex;gap:8px;margin-top:.75rem;}
+  .btn-next{flex:1;padding:13px;background:#2563EB;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s;}
+  .btn-next:hover{opacity:.88;}
+  .btn-back{padding:13px 16px;background:#fff;color:#666;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;cursor:pointer;transition:background .15s;}
+  .btn-back:hover{background:#f5f5f5;}
+  /* result */
+  .result-card{border-radius:12px;padding:2rem;margin-bottom:1rem;text-align:center;}
+  .rc-basic{background:#F0FDF4;border:1px solid #86EFAC;}
+  .rc-adv{background:#F5F3FF;border:1px solid #C4B5FD;}
+  .rc-border{background:#FFF7ED;border:1px solid #FCD34D;}
+  .assign-tag{display:inline-block;padding:5px 16px;border-radius:99px;font-size:12px;font-weight:700;margin-bottom:.75rem;letter-spacing:.02em;}
+  .at-b{background:#BBF7D0;color:#14532D;}
+  .at-a{background:#DDD6FE;color:#3B0764;}
+  .assign-title{font-size:24px;font-weight:700;color:#111;margin-bottom:8px;}
+  .assign-desc{font-size:13px;color:#555;line-height:1.7;margin-bottom:1.25rem;}
+  .mod-list{display:flex;flex-direction:column;gap:7px;text-align:left;}
+  .mod-row{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.45;}
+  .mr-c{background:#EFF6FF;color:#1E40AF;}
+  .mr-b{background:#F0FDF4;color:#166534;}
+  .mr-a{background:#F5F3FF;color:#4C1D95;}
+  .mod-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;flex-shrink:0;margin-top:2px;}
+  .mp-c{background:#BFDBFE;color:#1E40AF;}
+  .mp-b{background:#BBF7D0;color:#166534;}
+  .mp-a{background:#DDD6FE;color:#4C1D95;}
+  .score-card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem;}
+  .score-card h3{font-size:13px;font-weight:600;color:#888;margin-bottom:.875rem;}
+  .dim{margin-bottom:.875rem;}.dim:last-child{margin-bottom:0;}
+  .dim-head{display:flex;justify-content:space-between;margin-bottom:5px;}
+  .dim-lbl{font-size:12px;color:#666;}
+  .dim-val{font-size:12px;font-weight:700;}
+  .bar-bg{width:100%;height:8px;background:#F3F4F6;border-radius:99px;overflow:hidden;margin-bottom:6px;}
+  .bar-fill{height:100%;border-radius:99px;transition:width .7s ease;}
+  .sub-list{display:flex;flex-direction:column;gap:4px;}
+  .sub-row{display:flex;align-items:center;gap:7px;}
+  .sub-lbl{font-size:11px;color:#aaa;min-width:165px;}
+  .sub-bg{flex:1;height:4px;background:#F3F4F6;border-radius:99px;overflow:hidden;}
+  .sub-fill{height:100%;border-radius:99px;}
+  .sub-pct{font-size:10px;color:#bbb;min-width:26px;text-align:right;}
+  .note{font-size:11px;color:#bbb;margin-top:.875rem;padding-top:.875rem;border-top:1px solid #f0f0f0;line-height:1.7;}
+  .border-note{font-size:12px;background:#FFF7ED;color:#92400E;border-radius:8px;padding:10px 14px;margin-top:1rem;line-height:1.6;}
+  .sending{text-align:center;padding:1rem;font-size:13px;color:#888;}
+  .sent-ok{text-align:center;padding:.75rem;font-size:12px;color:#166534;background:#F0FDF4;border-radius:8px;margin-top:.5rem;}
+  .sent-err{text-align:center;padding:.75rem;font-size:12px;color:#991B1B;background:#FEF2F2;border-radius:8px;margin-top:.5rem;}
+  @media(max-width:480px){.header h1{font-size:18px;}.assign-title{font-size:20px;}.sub-lbl{min-width:130px;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <p class="logo">AI디지털배움터 × 서울문화예술재단</p>
+    <h1>AI 교육 반 배정 사전 설문</h1>
+    <p>응답 결과로 기초반·심화반이 자동 배정됩니다 · 총 17문항 · 약 5분</p>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:6%"></div></div>
+  <div class="prog-meta"><span id="pm-step">1단계 / 3단계</span><span id="pm-q">0 / 17 완료</span></div>
+
+  <!-- ── STEP 1 기본정보 ── -->
+  <div class="step active" id="s1">
+    <div class="card">
+      <div class="card-badge b-info">기본 정보</div>
+      <p class="card-title">수강생 기본 정보</p>
+      <p class="card-sub">응답 내용은 반 편성에만 활용됩니다.</p>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q1</span><span class="ql">성함<span class="req">*</span></span></div>
+        <input type="text" id="name" placeholder="홍길동">
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q2</span><span class="ql">소속 구분<span class="req">*</span></span></div>
+        <div class="opts" data-n="role" data-type="r">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>예술교육가 (강사·작가·기획자 등)</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>사무관 직원 (재단·자치구 문화재단 등)</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q3</span><span class="ql">AI·디지털 관련 교육을 받아본 경험이 있나요?<span class="req">*</span></span></div>
+        <div class="opts" data-n="edu" data-type="r" data-s="0,0,1,2">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>유튜브·블로그 등 혼자 찾아봤다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>워크숍·세미나에 참석한 적 있다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>정규 교육과정을 이수한 적 있다</label>
+        </div>
+      </div>
+    </div>
+    <div class="nav"><button class="btn-next" onclick="go(2)">다음 →</button></div>
+  </div>
+
+  <!-- ── STEP 2 공통과정 ── -->
+  <div class="step" id="s2">
+    <div class="card">
+      <div class="card-badge b-common">공통 과정 · 디지털 콘텐츠 보호</div>
+      <p class="card-title">저작권·CCL·AI 윤리 이해도</p>
+      <p class="card-sub">기초·심화반 모두 수강하는 공통 과목입니다. 관련 모듈: 기초9·기초20·기초31·기초34·심화19·심화30</p>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q4</span><span class="ql">저작권·초상권·사생활 침해를 구분하고 설명할 수 있나요?<span class="req">*</span></span><span class="mod-tag mt-c">기초9·기초20</span></div>
+        <div class="opts" data-n="copyright" data-type="r" data-s="0,1,2,3" data-dim="common">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>저작권이 무엇인지 잘 모른다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>들어봤지만 각각의 차이를 설명하기 어렵다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>세 가지 개념을 구분해서 설명할 수 있다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>콘텐츠 제작 시 실제 판단 기준으로 활용해봤다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q5</span><span class="ql">CC라이선스(BY·NC·ND·SA) 종류와 적용 방법을 알고 있나요?<span class="req">*</span></span><span class="mod-tag mt-c">심화19·기초20</span></div>
+        <div class="opts" data-n="ccl" data-type="r" data-s="0,1,2,3" data-dim="common">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>CC라이선스가 무엇인지 모른다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>이름은 알지만 종류는 모른다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>BY·NC·ND·SA 조건을 구분할 수 있다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>라이선스를 직접 선택·적용해본 경험이 있다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q6</span><span class="ql">AI 생성물의 저작권 귀속과 윤리 문제(딥페이크·편향 등)를 설명할 수 있나요?<span class="req">*</span></span><span class="mod-tag mt-c">기초31·기초34·심화30</span></div>
+        <div class="opts" data-n="ai_ethics" data-type="r" data-s="0,1,2,3" data-dim="common">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>전혀 모른다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>들어봤지만 설명하기 어렵다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>AI 저작권 귀속과 주요 윤리 이슈를 설명할 수 있다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>실무 판단 기준으로 적용하고 동료에게 설명할 수 있다</label>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="go(1)">← 이전</button>
+      <button class="btn-next" onclick="go(3)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 3 반배정 진단 ── -->
+  <div class="step" id="s3">
+    <!-- 영역A -->
+    <div class="card">
+      <div class="card-badge b-a">영역 A · 디지털 기초 역량</div>
+      <p class="card-title">기기·인터넷 활용 수준</p>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q7</span><span class="ql">컴퓨터·스마트폰으로 업무 문서·파일 관리·이메일을 혼자 처리할 수 있나요?<span class="req">*</span></span></div>
+        <div class="opts" data-n="device" data-type="r" data-s="0,1,2,3" data-dim="A">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>이메일·문서 작성이 아직 어렵다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>이메일·문서 작성·파일 관리는 혼자 할 수 있다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>클라우드·협업 도구(구글 드라이브 등)까지 능숙하다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>다양한 앱·플랫폼을 업무에 자유롭게 활용한다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q8</span><span class="ql">인터넷에서 필요한 정보를 검색하고 신뢰도를 판단할 수 있나요?<span class="req">*</span></span></div>
+        <div class="opts" data-n="search" data-type="r" data-s="0,1,2,3" data-dim="A">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>검색 자체가 익숙하지 않다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>키워드 검색은 하지만 신뢰도 판단은 어렵다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>출처 확인·비교 검색으로 신뢰도를 판단한다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>허위정보·딥페이크 등 정보 조작도 구별할 수 있다</label>
+        </div>
+      </div>
+    </div>
+    <!-- 영역B -->
+    <div class="card">
+      <div class="card-badge b-b">영역 B · 온라인에서 홍보하기 <span style="font-weight:500;opacity:.75;">(기초반 맞춤)</span></div>
+      <p class="card-title">이미지·영상 제작 및 SNS 홍보 경험</p>
+      <p class="card-sub">관련 모듈: 생활8·생활22·생활23·생활36·생활49</p>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q9</span><span class="ql">디자인 플랫폼(Canva·미리캔버스 등)으로 홍보 이미지를 만들어본 적 있나요?<span class="req">*</span></span><span class="mod-tag mt-b">생활36</span></div>
+        <div class="opts" data-n="design" data-type="r" data-s="0,1,2,3" data-dim="B">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>없다 — 도구 이름도 잘 모른다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>들어봤지만 직접 써본 적 없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>템플릿을 수정해서 간단히 만들어봤다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>목적에 맞게 직접 기획·디자인해봤다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q10</span><span class="ql">스마트폰으로 홍보용 영상을 촬영하고 편집해본 적 있나요?<span class="req">*</span></span><span class="mod-tag mt-b">생활8</span></div>
+        <div class="opts" data-n="video" data-type="r" data-s="0,1,2,3" data-dim="B">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>촬영만 해봤고 편집은 못 한다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>앱으로 자르기·자막 등 간단한 편집을 해봤다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>완성도 있는 홍보 영상을 독립 제작해봤다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q11</span><span class="ql">SNS·카카오톡 채널로 행사·프로그램을 직접 홍보해본 적 있나요?<span class="req">*</span></span><span class="mod-tag mt-b">생활22·생활23</span></div>
+        <div class="opts" data-n="sns" data-type="r" data-s="0,1,2,3" data-dim="B">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>다른 사람이 만든 내용을 대신 올린 적 있다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>직접 기획·작성·업로드했다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>채널을 운영하며 반응을 분석·개선해봤다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q12</span><span class="ql">홍보 콘텐츠를 만들 때 '누구에게·어떤 메시지·어떤 채널'을 구분해 기획해본 적 있나요?<span class="req">*</span></span><span class="mod-tag mt-b">생활49</span></div>
+        <div class="opts" data-n="plan" data-type="r" data-s="0,1,2,3" data-dim="B">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>그런 방식으로 생각해본 적 없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>대상 정도는 생각하고 작성한다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>대상·메시지·채널을 구분해 기획한다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>콘텐츠 캘린더·캠페인 단위로 기획해봤다</label>
+        </div>
+      </div>
+    </div>
+    <!-- 영역C -->
+    <div class="card">
+      <div class="card-badge b-c">영역 C · 생성형 AI 홍보기획 및 제작 <span style="font-weight:500;opacity:.75;">(심화반 맞춤)</span></div>
+      <p class="card-title">생성형 AI 활용 역량 — 심화반 배정의 핵심 기준</p>
+      <p class="card-sub">관련 모듈: 심화36·기초33·생활48·133번·134번·96번</p>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q13</span><span class="ql">ChatGPT·Gemini·Claude 등 생성형 AI 텍스트 도구를 얼마나 자주 사용하나요?<span class="req">*</span></span><span class="mod-tag mt-a">심화36·기초33</span></div>
+        <div class="opts" data-n="genai" data-type="r" data-s="0,1,2,3" data-dim="C">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>한 번도 없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>호기심으로 한두 번 써봤다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>월 1~2회 업무에 활용한다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>주 1회 이상 정기적으로 활용한다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q14</span><span class="ql">AI에게 원하는 결과를 얻기 위해 지시문(프롬프트)을 어떻게 작성하나요?<span class="req">*</span></span><span class="mod-tag mt-a">심화36·기초33</span></div>
+        <div class="opts" data-n="prompt" data-type="r" data-s="0,1,2,3" data-dim="C">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>프롬프트가 무엇인지 모른다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>짧은 단어나 문장으로 입력한다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>역할·맥락·출력 형식을 구체적으로 지정한다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>페르소나·예시·제약조건 등을 조합해 정교하게 설계한다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q15</span><span class="ql">AI 이미지 생성 도구(DALL-E·Adobe Firefly·미드저니 등)로 홍보 이미지를 만들어본 적 있나요?<span class="req">*</span></span><span class="mod-tag mt-a">133번·생활48</span></div>
+        <div class="opts" data-n="ai_img" data-type="r" data-s="0,1,2,3" data-dim="C">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>없다 — 도구 이름도 잘 모른다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>이름은 알지만 써본 적 없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>테스트 삼아 이미지를 생성해봤다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>실제 홍보물에 AI 생성 이미지를 활용해봤다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q16</span><span class="ql">생성형 AI로 홍보용 영상이나 숏츠(쇼트폼)를 만들어본 적 있나요?<span class="req">*</span></span><span class="mod-tag mt-a">133번·134번·생활48</span></div>
+        <div class="opts" data-n="ai_vid" data-type="r" data-s="0,1,2,3" data-dim="C">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>AI 영상 생성 도구가 있다는 것만 안다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>테스트 삼아 짧은 영상을 생성해봤다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>실제 SNS 홍보에 AI 생성 영상을 게시해봤다</label>
+        </div>
+      </div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q17</span><span class="ql">생성형 AI를 활용해 홍보 기획안·SNS 문구·포스터 등을 실제 업무에 적용해본 적 있나요?<span class="req">*</span></span><span class="mod-tag mt-a">96번·생활48</span></div>
+        <div class="opts" data-n="ai_work" data-type="r" data-s="0,1,2,3" data-dim="C">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>없다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>개인적으로 시험 삼아 만들어봤다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>실제 업무 결과물 일부에 활용했다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>AI 기반 홍보 워크플로를 정착시켜 운영 중이다</label>
+        </div>
+      </div>
+    </div>
+    <!-- 영역D -->
+    <div class="card">
+      <div class="card-badge b-d">영역 D · 자기 평가</div>
+      <div class="qb">
+        <div class="q-head"><span class="qnum">Q18</span><span class="ql">이번 교육에서 가장 원하는 것은?<span class="req">*</span></span></div>
+        <div class="opts" data-n="goal" data-type="r" data-s="0,0,1,2">
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>AI·디지털 기초 개념부터 차근차근 이해하고 싶다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>이미지·영상을 직접 만드는 실습을 배우고 싶다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>AI로 홍보 기획·콘텐츠를 더 잘 만들고 싶다</label>
+          <label class="opt"><div class="dot"><div class="dot-in"></div></div>이미 쓰는 AI 도구를 업무에 더 깊게 적용하고 싶다</label>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="go(2)">← 이전</button>
+      <button class="btn-next" onclick="submit()">반 배정 결과 보기 →</button>
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div class="step" id="s-result"><div id="ri"></div></div>
+</div>
+
+<script>
+// ★ 여기에 Google Apps Script Web App URL을 붙여넣으세요
+const SHEET_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
+
+const A = {};
+const PROG = {s1:6, s2:40, s3:78, 's-result':100};
+const R1 = ['role','edu'], R2 = ['copyright','ccl','ai_ethics'];
+const R3 = ['device','search','design','video','sns','plan','genai','prompt','ai_img','ai_vid','ai_work','goal'];
+const ALL = R1.length + R2.length + R3.length;
+
+function answered(){ return [...R1,...R2,...R3].filter(k=>A[k]!==undefined).length; }
+
+function bind(){
+  document.querySelectorAll('[data-type="r"]').forEach(g=>{
+    if(g._b) return; g._b=true;
+    g.querySelectorAll('.opt').forEach((o,i)=>{
+      o.addEventListener('click',()=>{
+        g.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+        o.classList.add('sel');
+        const sc = g.dataset.s ? g.dataset.s.split(',').map(Number) : null;
+        A[g.dataset.n] = {idx:i, score:sc?sc[i]:i, dim:g.dataset.dim||''};
+        updateUI();
+      });
+    });
+  });
+}
+
+function updateUI(){
+  const id = document.querySelector('.step.active').id;
+  const base = PROG[id]||6;
+  const extra = Math.round((answered()/ALL)*(PROG['s-result']-base));
+  document.getElementById('prog').style.width = Math.min(base+extra, 94)+'%';
+  document.getElementById('pm-q').textContent = answered()+' / '+ALL+' 완료';
+}
+
+function go(n){
+  const nameVal = document.getElementById('name')?.value?.trim();
+  if(n===2){ if(!nameVal){alert('성함을 입력해 주세요.');return;} if(R1.some(k=>!A[k])){alert('모든 필수 항목(*)에 응답해 주세요.');return;} }
+  if(n===3){ if(R2.some(k=>!A[k])){alert('모든 필수 항목(*)에 응답해 주세요.');return;} }
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  document.getElementById('pm-step').textContent = n+'단계 / 3단계';
+  document.getElementById('prog').style.width = PROG['s'+n]+'%';
+  bind(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function sc(k){ return A[k]?.score||0; }
+function p(v,max){ return Math.round(v/max*100); }
+
+function submit(){
+  if(R3.some(k=>!A[k])){alert('모든 필수 항목(*)에 응답해 주세요.');return;}
+
+  const dimA = sc('device')+sc('search');
+  const dimB = sc('design')+sc('video')+sc('sns')+sc('plan');
+  const dimC = sc('genai')+sc('prompt')+sc('ai_img')+sc('ai_vid')+sc('ai_work');
+  const common = sc('copyright')+sc('ccl')+sc('ai_ethics');
+  const ab = dimA+dimB;
+
+  let assigned, border=false;
+  if(dimC>=7 && ab>=7) assigned='adv';
+  else if(dimC>=5 && ab>=5){ assigned='adv'; border=true; }
+  else assigned='basic';
+  if(border && sc('goal')<=1) assigned='basic';
+  const isAdv = assigned==='adv';
+
+  const pA=p(dimA,6), pB=p(dimB,12), pC=p(dimC,15), pCom=p(common,9);
+  const mc = isAdv?'#7C3AED':'#16A34A';
+
+  const bSubs=[
+    {l:'이미지 제작 (생활36)',k:'design',max:3},
+    {l:'영상 편집 (생활8)',k:'video',max:3},
+    {l:'SNS 홍보 운영 (생활22·23)',k:'sns',max:3},
+    {l:'홍보 기획 전략 (생활49)',k:'plan',max:3},
+  ];
+  const cSubs=[
+    {l:'AI 텍스트 도구 (심화36·기초33)',k:'genai',max:3},
+    {l:'프롬프트 역량 (심화36)',k:'prompt',max:3},
+    {l:'AI 이미지 생성 (133번·생활48)',k:'ai_img',max:3},
+    {l:'AI 영상·숏츠 (133·134번)',k:'ai_vid',max:3},
+    {l:'업무 홍보 적용 (96번·생활48)',k:'ai_work',max:3},
+  ];
+
+  const subBar=(arr,color)=>arr.map(d=>{
+    const pv=p(sc(d.k),d.max);
+    return `<div class="sub-row"><span class="sub-lbl">${d.l}</span><div class="sub-bg"><div class="sub-fill" style="width:${pv}%;background:${color};opacity:.55;"></div></div><span class="sub-pct">${pv}%</span></div>`;
+  }).join('');
+
+  const modules = isAdv?[
+    {cls:'mr-c',pc:'mp-c',pl:'공통',txt:'디지털 콘텐츠 보호 — 기초9·기초20·기초31·기초34·심화19·심화30'},
+    {cls:'mr-a',pc:'mp-a',pl:'심화 맞춤',txt:'생성형 AI로 홍보기획 및 제작하기 — 심화36·기초33·96번'},
+    {cls:'mr-a',pc:'mp-a',pl:'심화 맞춤',txt:'디지털 콘텐츠 만들기 — 133번(이미지·영상)·134번(숏츠)·생활48'},
+  ]:[
+    {cls:'mr-c',pc:'mp-c',pl:'공통',txt:'디지털 콘텐츠 보호 — 기초9·기초20·기초31·기초34·심화19·심화30'},
+    {cls:'mr-b',pc:'mp-b',pl:'기초 맞춤',txt:'온라인에서 홍보하기 — 생활36(이미지)·생활8(영상)'},
+    {cls:'mr-b',pc:'mp-b',pl:'기초 맞춤',txt:'이미지·동영상 제작 및 편집 — 생활22·생활23·생활49'},
+  ];
+
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-result').classList.add('active');
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('pm-step').textContent='결과';
+  document.getElementById('pm-q').textContent=ALL+' / '+ALL+' 완료';
+
+  const name = document.getElementById('name').value.trim();
+
+  document.getElementById('ri').innerHTML=`
+    <div class="result-card ${isAdv?'rc-adv':'rc-basic'}">
+      <div style="font-size:40px;margin-bottom:.75rem;">${isAdv?'🤖':'📢'}</div>
+      <span class="assign-tag ${isAdv?'at-a':'at-b'}">${isAdv?'심화반 배정':'기초반 배정'}</span>
+      <p class="assign-title">${name} 님 — ${isAdv?'심화반':'기초반'}</p>
+      <p class="assign-desc">${isAdv
+        ?'생성형 AI 활용 경험과 온라인 홍보 역량을 갖추고 있어 <strong>심화반</strong>으로 배정되었습니다.<br>AI 기반 홍보 기획·콘텐츠 제작 실무 중심으로 교육이 진행됩니다.'
+        :'온라인 홍보와 콘텐츠 제작 기초부터 체계적으로 쌓을 <strong>기초반</strong>으로 배정되었습니다.<br>이미지·영상 편집과 SNS 홍보 실습 중심으로 교육이 진행됩니다.'
+      }</p>
+      <div class="mod-list">${modules.map(m=>`<div class="mod-row ${m.cls}"><span class="mod-pill ${m.pc}">${m.pl}</span><span>${m.txt}</span></div>`).join('')}</div>
+      ${border?'<p class="border-note">경계 수준으로 측정되었습니다. 교육 담당자가 추가 상담 후 최종 반을 확정할 수 있습니다.</p>':''}
+    </div>
+    <div class="score-card">
+      <h3>영역별 진단 점수</h3>
+      <div class="dim">
+        <div class="dim-head"><span class="dim-lbl">공통 과정 이해도</span><span class="dim-val" style="color:#2563EB;">${pCom}%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pCom}%;background:#2563EB;"></div></div>
+      </div>
+      <div class="dim">
+        <div class="dim-head"><span class="dim-lbl">A. 디지털 기초 역량</span><span class="dim-val" style="color:${mc};">${pA}%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pA}%;background:${mc};"></div></div>
+      </div>
+      <div class="dim">
+        <div class="dim-head"><span class="dim-lbl">B. 온라인 홍보 경험 <span style="font-size:10px;opacity:.6;">(기초반 핵심)</span></span><span class="dim-val" style="color:#D97706;">${pB}%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pB}%;background:#D97706;"></div></div>
+        <div class="sub-list" style="margin-top:5px;">${subBar(bSubs,'#D97706')}</div>
+      </div>
+      <div class="dim">
+        <div class="dim-head"><span class="dim-lbl">C. 생성형 AI 역량 <span style="font-size:10px;opacity:.6;">(심화반 핵심)</span></span><span class="dim-val" style="color:#7C3AED;">${pC}%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pC}%;background:#7C3AED;"></div></div>
+        <div class="sub-list" style="margin-top:5px;">${subBar(cSubs,'#7C3AED')}</div>
+      </div>
+      <p class="note">배정 기준 — C영역(AI 역량) ${dimC}/15점 · A+B 합산 ${ab}/18점<br>
+      심화반: C ≥ 7 AND A+B ≥ 7 / 경계: C ≥ 5 AND A+B ≥ 5 / 기초반: 그 외</p>
+    </div>
+    <div id="send-status"><p class="sending">응답을 저장하는 중...</p></div>
+  `;
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  // 구글 시트 전송
+  const payload = {
+    timestamp: new Date().toLocaleString('ko-KR'),
+    name: name,
+    role: A.role?.idx===0?'예술교육가':'사무관',
+    edu: ['없음','자학습','워크숍','정규과정'][A.edu?.idx||0],
+    assigned: isAdv?'심화반':'기초반',
+    border: border?'경계':'정상',
+    score_common: pCom,
+    score_A: pA,
+    score_B: pB,
+    score_C: pC,
+    dimC_raw: dimC,
+    dimAB_raw: ab,
+    q_copyright: A.copyright?.idx,
+    q_ccl: A.ccl?.idx,
+    q_ai_ethics: A.ai_ethics?.idx,
+    q_device: A.device?.idx,
+    q_search: A.search?.idx,
+    q_design: A.design?.idx,
+    q_video: A.video?.idx,
+    q_sns: A.sns?.idx,
+    q_plan: A.plan?.idx,
+    q_genai: A.genai?.idx,
+    q_prompt: A.prompt?.idx,
+    q_ai_img: A.ai_img?.idx,
+    q_ai_vid: A.ai_vid?.idx,
+    q_ai_work: A.ai_work?.idx,
+    q_goal: A.goal?.idx,
+  };
+
+  if(SHEET_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL'){
+    document.getElementById('send-status').innerHTML='<p class="sent-err">⚠ Apps Script URL이 설정되지 않았습니다. 설정가이드.md를 참고해 주세요.</p>';
+    return;
+  }
+
+  fetch(SHEET_URL, {
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).then(()=>{
+    document.getElementById('send-status').innerHTML='<p class="sent-ok">✓ 응답이 저장되었습니다.</p>';
+  }).catch(()=>{
+    document.getElementById('send-status').innerHTML='<p class="sent-err">⚠ 저장 중 오류가 발생했습니다. 담당자에게 문의해 주세요.</p>';
+  });
+}
+
+bind();
+</script>
+</body>
+</html>
