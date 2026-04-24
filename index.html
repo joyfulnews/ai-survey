@@ -378,7 +378,7 @@
     </div>
     <div class="nav">
       <button class="btn-back" onclick="go(2)">← 이전</button>
-      <button class="btn-next" onclick="submit()">반 배정 결과 보기 →</button>
+      <button class="btn-next" onclick="submit()">나의 AI 역량 진단 결과 보기 →</button>
     </div>
   </div>
 
@@ -388,13 +388,13 @@
 
 <script>
 // ★ 여기에 Google Apps Script Web App URL을 붙여넣으세요
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxF56xaW47SWM5otaloYkekkdpY_3gEutjSy216lRqqPfiaPB2-YI-Oc_rFmhRO1GWC/exec';
+const SHEET_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
 
 const A = {};
 const PROG = {s0:4, s1:14, s2:46, s3:80, 's-result':100};
 const R1 = ['gender','age','edu'], R2 = ['copyright','ccl','ai_ethics'];
 const R3 = ['device','search','design','video','sns','plan','genai','prompt','ai_img','ai_vid','ai_work','attitude','goal'];
-const ALL = R1.length + R2.length + R3.length;
+const ALL = R1.length + R2.length + R3.length + 2; // +2: 성함·연락처 텍스트 필드
 
 function toggleAgree(){
   const c1 = document.getElementById('agree-check').checked;
@@ -410,7 +410,12 @@ function toggleAgree(){
   l2.style.background = c2?'#EFF6FF':'#fff';
 }
 
-function answered(){ return [...R1,...R2,...R3].filter(k=>A[k]!==undefined).length; }
+function answered(){
+  const nameVal = document.getElementById('name')?.value?.trim();
+  const phoneVal = document.getElementById('phone')?.value?.trim();
+  const textCount = (nameVal?1:0) + (phoneVal?1:0);
+  return textCount + [...R1,...R2,...R3].filter(k=>A[k]!==undefined).length;
+}
 
 function bind(){
   document.querySelectorAll('[data-type="r"]').forEach(g=>{
@@ -621,6 +626,11 @@ function submit(){
 }
 
 bind();
-</script>
+
+// 텍스트 필드 입력 시 진행 카운터 업데이트
+['name','phone'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', updateUI);
+});</script>
 </body>
 </html>
